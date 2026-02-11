@@ -1,26 +1,20 @@
 [gd_scene load_steps=3 format=3 uid="uid://bcuj5inskcj4q"]
 
-[ext_resource type="PackedScene" uid="uid://bub2dra01dn2x" path="res://scenes/unit.tscn" id="1_uwrxv"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_uwrxv"]
+[ext_resource type="PackedScene" uid="uid://bfob2il1be6cg" path="res://scenes/path.tscn" id="2_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://ckxpbfgl3rd2h" path="res://scenes/planet.tscn" id="2_yqjtg"]
 
 [node name="Game" type="Node2D"]
-
-[node name="CharacterBody2D" parent="." node_paths=PackedStringArray("start_point", "end_point") instance=ExtResource("1_uwrxv")]
-start_point = NodePath("../Start")
-end_point = NodePath("../End")
-
-[node name="Start" type="Marker2D" parent="."]
-
-[node name="End" type="Marker2D" parent="."]
-position = Vector2(4, -497)
-scale = Vector2(15.479998, 1)
-
-[node name="Area2D" type="Area2D" parent="End"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="End/Area2D"]
-shape = SubResource("RectangleShape2D_uwrxv")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-3, -257)
 zoom = Vector2(0.505, 0.505)
+
+[node name="Planet" parent="." instance=ExtResource("2_yqjtg")]
+position = Vector2(-704, 4.0000305)
+scale = Vector2(33.265907, 33.265907)
+
+[node name="Planet2" parent="." instance=ExtResource("2_yqjtg")]
+position = Vector2(615, -477.00006)
+scale = Vector2(28.48, 28.48)
+
+[node name="Path" parent="." instance=ExtResource("2_lnu2h")]

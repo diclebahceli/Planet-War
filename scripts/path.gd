@@ -14,14 +14,15 @@ enum PathState {
 var state: PathState = PathState.IDLE
 
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_event: InputEventMouseButton = event
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			var mouse_pos: Vector2 = get_global_mouse_position()
 			if mouse_event.pressed:
-				_on_mouse_pressed(mouse_event.position)
+				_on_mouse_pressed(mouse_pos)
 			else:
-				_on_mouse_released(mouse_event.position)
+				_on_mouse_released(mouse_pos)
 
 
 func _process(_delta: float) -> void:
@@ -84,7 +85,9 @@ func _complete_path(end_planet: Area2D) -> void:
 
 
 func _add_point(point: Vector2) -> void:
+				
 	current_points.append(point)
+	print(current_points)
 	line_2d.add_point(point)
 	path_2d.curve.add_point(point)
 
@@ -97,10 +100,9 @@ func _get_planet_under_mouse(mouse_pos: Vector2) -> Area2D:
 	query.collide_with_areas = true
 
 	var results: Array[Dictionary] = space_state.intersect_point(query)
-
 	for result: Dictionary in results:
 		var collider: Node2D = result["collider"]
-		if collider is Area2D and collider.is_in_group("planet"):
+		if collider is Planet:
 			return collider
 
 	return null
