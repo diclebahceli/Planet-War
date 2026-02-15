@@ -2,21 +2,24 @@
 
 [ext_resource type="Script" uid="uid://cvdk4dqc78bg0" path="res://scripts/unit.gd" id="1_o7ajc"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gic7v"]
+size = Vector2(64, 64)
+
 [sub_resource type="Gradient" id="Gradient_k673f"]
 offsets = PackedFloat32Array(1)
-colors = PackedColorArray(1, 1, 1, 1)
+colors = PackedColorArray(3.657937e-06, 0, 0.8619678, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_1jvru"]
 gradient = SubResource("Gradient_k673f")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gic7v"]
-size = Vector2(64, 64)
-
-[node name="Unit" type="CharacterBody2D"]
+[node name="Unit" type="PathFollow2D"]
+loop = false
 script = ExtResource("1_o7ajc")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("GradientTexture2D_1jvru")
+[node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_gic7v")
+
+[node name="Sprite2D" type="Sprite2D" parent="Area2D"]
+texture = SubResource("GradientTexture2D_1jvru")
