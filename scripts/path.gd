@@ -1,9 +1,11 @@
 class_name Path
 extends Node2D
 signal path_completed(path: Path2D)
+signal path_cancelled
 
 @onready var path_2d: Path2D = $Path2D
 @onready var line_2d: Line2D = $Line2D
+
 
 var start_planet : Area2D = null
 var current_points : Array[Vector2] = []
@@ -33,19 +35,12 @@ func _on_mouse_pressed(mouse_pos: Vector2) -> void:
 	var planet : Area2D = _get_planet_under_point(mouse_pos)
 	if planet == null:
 		return
-		
+	_cancel_path()
 	start_planet = planet
 	state = PathState.DRAWING
 	
-	current_points.clear()
-	line_2d.clear_points()
-	path_2d.curve.clear_points()
-	
 	var start_pos : Vector2 = start_planet.global_position
 	_add_point(start_pos)
-	
-	
-	
 	
 func _on_mouse_released() -> void:
 	if state != PathState.DRAWING:
@@ -56,29 +51,30 @@ func _on_mouse_released() -> void:
 		_cancel_path()
 	else:
 		_complete_path(end_planet)
-	
+
 	
 	
 func _cancel_path() -> void:
+	for child : Node2D in path_2d.get_children():
+		child.queue_free()
 	line_2d.clear_points()
 	path_2d.curve.clear_points()
 	current_points.clear()
 	
 	start_planet = null
 	state = PathState.IDLE
-	
+	path_cancelled.emit()
 	
 func _complete_path(end_planet : Area2D) -> void:
 	var end_pos: Vector2 = end_planet.global_position
 	_add_point(end_pos)
 	
-	start_planet = null
 	state = PathState.IDLE
 	path_completed.emit(path_2d)
+	
 
 	
 func _add_point(point : Vector2) -> void:
-	print(current_points.size())
 	current_points.append(point)
 	line_2d.add_point(point)
 	path_2d.curve.add_point(point)
@@ -111,6 +107,10 @@ func _process(_delta:float) -> void:
 	var mouse_pos : Vector2 = get_global_mouse_position()
 	
 	if current_points.is_empty():
+		return
+		
+	var planet_under_mouse : Area2D = _get_planet_under_point(mouse_pos)
+	if planet_under_mouse == start_planet:
 		return
 		
 	var last_point : Vector2 = current_points[current_points.size() -1]
