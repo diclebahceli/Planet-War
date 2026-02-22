@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bddso030ibqfv"]
+
+[ext_resource type="Script" uid="uid://ddx5r711mju1f" path="res://scripts/road.gd" id="1_my2y2"]
+[ext_resource type="PackedScene" uid="uid://dd72n7q8b646q" path="res://scenes/unit_manager.tscn" id="2_fy6l0"]
+
+[node name="Road" type="Node2D" node_paths=PackedStringArray("unit_manager")]
+script = ExtResource("1_my2y2")
+unit_manager = NodePath("UnitManager")
+
+[node name="Path2D" type="Path2D" parent="."]
+
+[node name="Line2D" type="Line2D" parent="."]
+
+[node name="UnitManager" parent="." node_paths=PackedStringArray("road") instance=ExtResource("2_fy6l0")]
+road = NodePath("..")

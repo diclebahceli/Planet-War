@@ -1,16 +1,19 @@
-class_name Path
+class_name Road
 extends Node2D
-signal path_completed(path: Path2D)
-signal path_cancelled
+
+signal road_complete
 
 @onready var path_2d: Path2D = $Path2D
 @onready var line_2d: Line2D = $Line2D
-
+@export var unit_manager : UnitManager
 
 var start_planet : Area2D = null
 var current_points : Array[Vector2] = []
 const MAX_POINTS : float = 200.0
-
+var is_road :bool:
+	get:
+		return current_points.size() > 0
+var is_road_active : bool = false
 enum PathState{
 	IDLE,
 	DRAWING
@@ -18,8 +21,12 @@ enum PathState{
 
 var state : PathState = PathState.IDLE
 
+func _ready() -> void:
+	path_2d.curve = Curve2D.new()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_road_active == false:
+		return
 	if event is InputEventMouseButton:
 		var mouse_event : InputEventMouseButton = event
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
@@ -63,16 +70,17 @@ func _cancel_path() -> void:
 	
 	start_planet = null
 	state = PathState.IDLE
-	path_cancelled.emit()
+	unit_manager.stop_unit_spwaning()
+	
 	
 func _complete_path(end_planet : Area2D) -> void:
 	var end_pos: Vector2 = end_planet.global_position
 	_add_point(end_pos)
 	
 	state = PathState.IDLE
-	path_completed.emit(path_2d)
-	
-
+	unit_manager.start_unit_spawning()
+	is_road_active = false
+	road_complete.emit()
 	
 func _add_point(point : Vector2) -> void:
 	current_points.append(point)
