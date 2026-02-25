@@ -2,6 +2,7 @@ class_name Road
 extends Node2D
 
 signal road_complete
+signal road_cancel
 
 @onready var path_2d: Path2D = $Path2D
 @onready var line_2d: Line2D = $Line2D
@@ -36,7 +37,7 @@ func start_road(planet: Planet) -> void:
 func try_complete_road() -> void:
 
 	var last_point : Vector2 = current_points[current_points.size() - 1]
-	var end_planet : Area2D = _get_planet_under_point(last_point)
+	var end_planet : Area2D = Globals._get_planet_under_point(last_point)
 	if end_planet == null or end_planet == start_planet:
 		cancel_path()
 	else:
@@ -56,8 +57,7 @@ func cancel_path() -> void:
 	start_planet = null
 	Globals.state = Globals.DrawingState.IDLE
 	unit_manager.stop_unit_spwaning()
-	road_complete.emit()
-	
+	road_cancel.emit()
 	
 func _complete_path(end_planet : Area2D) -> void:
 	var end_pos: Vector2 = end_planet.global_position
@@ -91,31 +91,30 @@ func is_point_on_road(mouse_pos: Vector2) -> bool:
 		return true
 		
 	return false
+	
+	
+func draw_control() -> void:
+	
 
+	if current_points.size() <= 0:
+		return
 
-	
-func _process(_delta:float) -> void:
-		
-	if Globals.state != Globals.DrawingState.DRAWING:
-		return
-	
-	if is_road and is_road_active==false:
-		return
-	
 	if current_points.size() > MAX_POINTS:
 		return
-	
-
 		
-	mouse_pos = get_global_mouse_position()
+	var mouse_pos: Vector2 = get_global_mouse_position()
 	
-	if current_points.is_empty():
-		return
-		
-	var planet_under_mouse : Area2D = _get_planet_under_point(mouse_pos)
+	
+	var planet_under_mouse : Area2D = Globals._get_planet_under_point(mouse_pos)
 	if planet_under_mouse == start_planet:
 		return
 		
 	var last_point : Vector2 = current_points[current_points.size() -1]
 	if last_point.distance_to(mouse_pos) > 10.0:
 		_add_point(mouse_pos)
+
+
+	
+func _process(_delta:float) -> void:
+	draw_control()
+	
