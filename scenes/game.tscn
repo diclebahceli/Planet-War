@@ -18,4 +18,4 @@ position = Vector2(615, -477.00006)
 scale = Vector2(28.48, 28.48)
 
 [node name="RoadManager" parent="." instance=ExtResource("2_lnu2h")]
-road_limit = 3
+road_limit = 4
